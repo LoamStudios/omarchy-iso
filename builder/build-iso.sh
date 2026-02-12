@@ -94,6 +94,14 @@ ln -s "$offline_mirror_dir" "/var/cache/omarchy/mirror/offline"
 # same config when booted
 cp $build_cache_dir/pacman.conf "$build_cache_dir/airootfs/etc/pacman.conf"
 
+# For unattended builds, set GRUB and syslinux to boot the unattended entry by default
+if [[ "${OMARCHY_UNATTENDED:-}" == "1" ]]; then
+  sed -i 's/^default=archlinux$/default=archlinux-unattended/' "$build_cache_dir/grub/grub.cfg"
+  sed -i 's/^timeout=3$/timeout=1/' "$build_cache_dir/grub/grub.cfg"
+  sed -i 's/^DEFAULT arch64$/DEFAULT arch64auto/' "$build_cache_dir/syslinux/archiso_sys.cfg"
+  sed -i 's/^TIMEOUT 150$/TIMEOUT 10/' "$build_cache_dir/syslinux/archiso_sys.cfg"
+fi
+
 # Finally, we assemble the entire ISO
 mkarchiso -v -w "$build_cache_dir/work/" -o "/out/" "$build_cache_dir/"
 

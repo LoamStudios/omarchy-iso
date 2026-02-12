@@ -31,9 +31,13 @@ while [[ $# -gt 0 ]]; do
     OMARCHY_MIRROR=rc
     shift
     ;;
+  --unattended)
+    OMARCHY_UNATTENDED=1
+    shift
+    ;;
   *)
     echo "Unknown option: $1"
-    echo "Usage: $0 [--no-cache] [--no-boot-offer] [--local-source] [--dev] [--edge] [--rc]"
+    echo "Usage: $0 [--no-cache] [--no-boot-offer] [--local-source] [--dev] [--edge] [--rc] [--unattended]"
     exit 1
     ;;
   esac
@@ -51,6 +55,7 @@ mkdir -p "$BUILD_RELEASE_PATH"
 OMARCHY_INSTALLER_REPO="${OMARCHY_INSTALLER_REPO:-basecamp/omarchy}"
 OMARCHY_INSTALLER_REF="${OMARCHY_INSTALLER_REF:-master}"
 OMARCHY_MIRROR="${OMARCHY_MIRROR:-stable}"
+OMARCHY_UNATTENDED="${OMARCHY_UNATTENDED:-}"
 
 DOCKER_ARGS=(
   --rm
@@ -58,6 +63,7 @@ DOCKER_ARGS=(
   -e "OMARCHY_INSTALLER_REPO=$OMARCHY_INSTALLER_REPO"
   -e "OMARCHY_INSTALLER_REF=$OMARCHY_INSTALLER_REF"
   -e "OMARCHY_MIRROR=$OMARCHY_MIRROR"
+  -e "OMARCHY_UNATTENDED=$OMARCHY_UNATTENDED"
   -e "HOST_UID=$(id -u)"
   -e "HOST_GID=$(id -g)"
   -v "$BUILD_RELEASE_PATH/:/out/"
